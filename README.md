@@ -5,4 +5,4 @@
 
 Necessary packages TBA here.
 
-![alt text](https://github.com/emmastorberg/FYS-STK4155_Project3/diffusionmovie.gif)
+![alt text](https://github.com/emmastorberg/FYS-STK4155_Project3/blob/main/diffusionmovie.gif)
