@@ -71,7 +71,7 @@ class Diffusion1D:
         t = np.array(list(data.keys()))
         save_step = t[1] - t[0]
 
-        im = ax.imshow(np.zeros((1, len(self.x))), aspect="auto", cmap="gist_heat", 
+        im = ax.imshow(np.zeros((1, len(self.x))), aspect="auto", cmap="gist_heat", interpolation=None,
                     extent=[self.x.min(), self.x.max(), -0.05, 0.05],  # limited y range for the rod
                     origin="lower", animated=True)
 
