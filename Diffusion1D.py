@@ -96,8 +96,8 @@ class Diffusion1D:
 
             return (im, time_text)
 
-        ani = animation.FuncAnimation(fig=fig, func=update, frames=len(data), blit=True)
-        ani.save("diffusionmovie.apng", writer="pillow", fps=5)
+        ani = animation.FuncAnimation(fig=fig, func=update, frames=len(data), blit=True, interval=20)
+        ani.save("diffusionmovie.gif", writer="pillow")
         ani.to_jshtml()
         plt.show()
 
