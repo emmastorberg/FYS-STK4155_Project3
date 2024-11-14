@@ -26,4 +26,4 @@ jobs:
         pip install pytest numpy scipy matplotlib
     - name: Test with pytest
       run: |
-        pytest -v -W ignore::pytest.PytestCollectionWarning tests.py
+        pytest -v -W ignore::pytest.PytestCollectionWarning *.py
