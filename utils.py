@@ -47,7 +47,13 @@ def plot_diffusion_eq(
     plt.show()
 
 
-def make_animation(data: dict, rod_coordinates: np.ndarray, dt: float, title: str = "Heat Diffusion in 1D Rod", filename: str = "diffusion.gif") -> None:
+def make_animation(
+    data: dict,
+    rod_coordinates: np.ndarray,
+    dt: float,
+    title: str = "Heat Diffusion in 1D Rod",
+    filename: str = "diffusion.gif",
+) -> None:
     from matplotlib import animation
 
     fig, ax = plt.subplots()
@@ -101,9 +107,9 @@ def make_animation(data: dict, rod_coordinates: np.ndarray, dt: float, title: st
 
         return (im, time_text)
 
-    ani = animation.FuncAnimation(fig=fig, func=update, frames=len(data), blit=True, interval=20)
+    ani = animation.FuncAnimation(
+        fig=fig, func=update, frames=len(data), blit=True, interval=20
+    )
     ani.save(filename, writer="pillow")
     ani.to_jshtml()
     plt.show()
-
-
