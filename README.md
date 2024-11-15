@@ -5,4 +5,5 @@
 
 Necessary packages TBA here.
 
-![alt text](https://github.com/emmastorberg/FYS-STK4155_Project3/blob/main/diffusionmovie.gif)
+# Numerically-determined heat diffusion:
+![alt text](https://github.com/emmastorberg/FYS-STK4155_Project3/blob/main/numerical_diffusion.gif)
