@@ -33,4 +33,6 @@ def test_diffusion_equation_error(dx):
     assert np.allclose(data, u, atol=1e-02)
 
 if __name__ == "__main__":
+    test_dx_values()
+    test_dt_values()
     test_diffusion_equation_error()

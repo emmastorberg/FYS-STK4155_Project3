@@ -79,7 +79,7 @@ class Diffusion1D:
         ax.set_ylim(-1, 1)
         ax.yaxis.set_visible(False)
         ax.set_xlabel("Position on Rod (x)")
-        ax.set_title("Diffusion of Heat in 1D Rod")
+        ax.set_title("Heat Diffusion in 1D Rod Determined Numerically")
 
         time_text = ax.text(0.05, 0.95, "", transform=ax.transAxes, color="white", fontsize=12,
                         verticalalignment="top", horizontalalignment="left")
@@ -97,7 +97,7 @@ class Diffusion1D:
             return (im, time_text)
 
         ani = animation.FuncAnimation(fig=fig, func=update, frames=len(data), blit=True, interval=20)
-        ani.save("diffusionmovie.gif", writer="pillow")
+        ani.save("numerical_diffusion.gif", writer="pillow")
         ani.to_jshtml()
         plt.show()
 

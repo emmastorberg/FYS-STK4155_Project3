@@ -47,7 +47,7 @@ def plot_diffusion_eq(
     plt.show()
 
 
-def make_animation(data: dict, rod_coordinates: np.ndarray, dt: float) -> None:
+def make_animation(data: dict, rod_coordinates: np.ndarray, dt: float, title: str = "Heat Diffusion in 1D Rod", filename: str = "diffusion.gif") -> None:
     from matplotlib import animation
 
     fig, ax = plt.subplots()
@@ -74,7 +74,7 @@ def make_animation(data: dict, rod_coordinates: np.ndarray, dt: float) -> None:
     ax.set_ylim(-1, 1)  # Limit the height of the heat region (short rod)
     ax.yaxis.set_visible(False)
     ax.set_xlabel("Position on Rod (x)")
-    ax.set_title("Diffusion of Heat in 1D Rod")
+    ax.set_title(title)
 
     # Text object for displaying time in seconds
     time_text = ax.text(
@@ -101,12 +101,9 @@ def make_animation(data: dict, rod_coordinates: np.ndarray, dt: float) -> None:
 
         return (im, time_text)
 
-    ani = animation.FuncAnimation(fig=fig, func=update, frames=len(data), blit=True)
-    ani.save("diffusionmovie.apng", writer="pillow", fps=5)
+    ani = animation.FuncAnimation(fig=fig, func=update, frames=len(data), blit=True, interval=20)
+    ani.save(filename, writer="pillow")
     ani.to_jshtml()
     plt.show()
 
 
-def generate_dataset_for_NN(): 
-    # Use analytical solution somehow to create dataset
-    ...
