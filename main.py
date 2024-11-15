@@ -25,7 +25,7 @@ def main():
         x,
         dt,
         title="Heat Diffusion in 1D Rod Determined Analytically",
-        filename="diffusion_analytical.gif",
+        filename="analytical_diffusion.gif",
     )
 
     # Plot numerical solution
@@ -40,6 +40,17 @@ def main():
     movie_data = movie(Nt, save_step=20)
 
     movie.animation(movie_data)
+
+    #from neural network. Not supposed to be here. So that we dont forget how to use it
+
+    # output = nnet(x, t)
+    # output = output.reshape(N + 1, Nt + 1)
+    # output = output.detach().numpy()
+
+    # x = np.linspace(0, L, N + 1)
+    # t = np.linspace(0, t_max, Nt + 1)
+
+    # utils.plot_diffusion_eq(x, t, output.T)
 
 
 if __name__ == "__main__":
