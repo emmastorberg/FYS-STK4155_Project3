@@ -3,7 +3,8 @@ import torch.nn as nn
 import numpy as np
 from tqdm import tqdm
 
-from neural_network import NN, loss
+from neural_network import NN
+from cost_pinn import cost_total
 
 
 def main():
@@ -30,7 +31,7 @@ def main():
     pbar = tqdm(total=epochs)
     for epoch in range(epochs):
         optimizer.zero_grad()
-        cost = loss(x, t, nnet)
+        cost = cost_total(x, t, nnet)
         cost.backward()
         optimizer.step()
         pbar.set_postfix(loss=cost.item())
