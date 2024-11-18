@@ -102,13 +102,10 @@ class Diffusion1D:
         return plotdata
 
     def animation(self, data: dict) -> None:
-        """_summary_
+        """Animate heat diffusion in a 1D rod. 
 
         Args:
-            data (dict): _description_
-
-        Returns:
-            _type_: _description_
+            data (dict): A dictionary containing all points to plot with timestep indices as keys.
         """
         from matplotlib import animation
 
