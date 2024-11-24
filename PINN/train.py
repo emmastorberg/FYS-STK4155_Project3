@@ -13,8 +13,8 @@ def main():
     L = 1
     dx = 0.1
     N = int(L / dx)
-    dt = 0.005
-    Nt = 100
+    dt = 0.0005
+    Nt = 1000
     t_max = dt * Nt
 
     x = torch.linspace(0, L, N + 1, requires_grad=True)
@@ -26,8 +26,9 @@ def main():
     nnet = NN()
     nnet = nnet.to(device)
     optimizer = torch.optim.Adam(nnet.parameters())
+    optim_name = "Adam"
 
-    epochs = 50000
+    epochs = 5000
     pbar = tqdm(total=epochs)
     for epoch in range(epochs):
         optimizer.zero_grad()
@@ -37,7 +38,13 @@ def main():
         pbar.set_postfix(loss=cost.item())
         pbar.update()
 
-    filename = ""
+    filename = (
+        f"dx{str(dx).replace(".", "")}_"
+        f"dt{str(dt).replace(".", "")}_"
+        f"Nt{Nt}_"
+        f"optim{optim_name}_"
+        f"epoch{epochs}"
+    )
 
     torch.save(nnet.state_dict(), f"models/{filename}.pt")
 
