@@ -13,8 +13,8 @@ def test_dt_values(dt):
     with pytest.raises(ValueError):
         sol = Diffusion1D(dx=0.1, dt = dt)
 
-@pytest.mark.parametrize("dx", [0.1, 0.01])
-def test_diffusion_equation_error(dx):
+@pytest.mark.parametrize("dx, atol", [(0.1, 1e-02), (0.01, 1e-15)])
+def test_diffusion_equation_error(dx, atol):
     Nt = 100
 
     sol = Diffusion1D(dx=dx)
@@ -30,7 +30,7 @@ def test_diffusion_equation_error(dx):
     if u.shape != data.shape:
         raise ValueError("The numerical solution and analytical solution do not have the same shape.")
     
-    assert np.allclose(data, u, atol=1e-02)
+    assert np.allclose(data, u, atol=atol)
 
 if __name__ == "__main__":
     test_dx_values()
