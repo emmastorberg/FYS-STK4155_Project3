@@ -1,7 +1,9 @@
+from typing import Callable
+
 import numpy as np
 from scipy import sparse
 import matplotlib.pyplot as plt
-from typing import Callable
+
 import utils
 
 
