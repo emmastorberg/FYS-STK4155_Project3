@@ -96,8 +96,14 @@ def plot_diffusion_eq(
         time_axis (np.ndarray): time axis
         solution_grid (np.ndarray): heat given as a 2D matrix grid.
     """
-    h = plt.contourf(space_axis, time_axis, solution_grid)
-    plt.axis("scaled")
+    plt.imshow(
+        solution_grid,
+        aspect="auto",
+        extent=[space_axis.min(), space_axis.max(), time_axis.max(), time_axis.min()],
+        origin="upper",
+        cmap="afmhot",
+    )
+
     plt.xlabel("Position on Rod (x)")
     plt.ylabel("Time (s)")
     plt.colorbar()
@@ -134,7 +140,7 @@ def make_animation(
     im = ax.imshow(
         np.zeros((1, len(rod_coordinates))),
         aspect="auto",
-        cmap="cubehelix",
+        cmap="afmhot",
         extent=[
             rod_coordinates.min(),
             rod_coordinates.max(),

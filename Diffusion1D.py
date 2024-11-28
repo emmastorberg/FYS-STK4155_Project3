@@ -120,7 +120,7 @@ class Diffusion1D:
         im = ax.imshow(
             np.zeros((1, len(self.x))),
             aspect="auto",
-            cmap="gist_heat",
+            cmap="afmhot",
             interpolation=None,
             extent=[
                 self.x.min(),
