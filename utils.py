@@ -87,7 +87,10 @@ def matrix_to_dict(data_matrix: np.ndarray, save_step: int = 1) -> dict:
 
 
 def plot_diffusion_eq(
-    space_axis: np.ndarray, time_axis: np.ndarray, solution_grid: np.ndarray
+    space_axis: np.ndarray,
+    time_axis: np.ndarray,
+    solution_grid: np.ndarray,
+    title: str = "Heat Diffusion in 1D Rod",
 ) -> None:
     """Plot the heat at different x-coordinates as a function of time.
 
@@ -95,6 +98,8 @@ def plot_diffusion_eq(
         space_axis (np.ndarray): x-axis, i.e. location in space
         time_axis (np.ndarray): time axis
         solution_grid (np.ndarray): heat given as a 2D matrix grid.
+        title (str, optional): Title to be displayed on plot. Defaults to "Heat Diffusion in 1D Rod".
+
     """
     plt.imshow(
         solution_grid,
@@ -107,6 +112,7 @@ def plot_diffusion_eq(
     plt.xlabel("Position on Rod (x)")
     plt.ylabel("Time (s)")
     plt.colorbar()
+    plt.title(title)
     plt.show()
 
 

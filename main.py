@@ -16,7 +16,7 @@ def main():
     dx = 0.1
     N = int(L / dx)
     dt = 0.0005
-    Nt = 1000
+    Nt = 600
     t_max = dt * Nt
 
     # Plot analytical solution
