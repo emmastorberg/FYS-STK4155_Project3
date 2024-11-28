@@ -107,6 +107,8 @@ def plot_diffusion_eq(
         extent=[space_axis.min(), space_axis.max(), time_axis.max(), time_axis.min()],
         origin="upper",
         cmap="afmhot",
+        vmin=0,
+        vmax=1,
     )
 
     plt.xlabel("Position on Rod (x)")

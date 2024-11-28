@@ -7,8 +7,9 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 
-from neural_network import NN
-from cost_pinn import cost_total
+from PINN import NN
+from PINN.cost_pinn import cost_total
+# from cost_pinn import cost_total
 
 from data.generate_data import load_PINN_data
 
@@ -26,7 +27,7 @@ def train_model(x, t, num_hidden, hidden_dim, activation):
         nn.LeakyReLU: "leaky_relu",
     }
 
-    epochs = 5000
+    epochs = 3000
     pbar = tqdm(total=epochs)
     for epoch in range(epochs):
         optimizer.zero_grad()
@@ -47,6 +48,6 @@ def train_model(x, t, num_hidden, hidden_dim, activation):
 if __name__ == "__main__":
     x, t = load_PINN_data(dx=0.1, dt=0.005)
     num_hidden = 5
-    hidden_dim = 100
+    hidden_dim = 70
     activation = nn.Tanh
     train_model(x, t, num_hidden, hidden_dim, activation)

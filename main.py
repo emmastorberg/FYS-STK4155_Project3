@@ -10,7 +10,7 @@ from data.generate_data import load_numsolver_data, load_PINN_data, make_data_pl
 
 def main():
     num_hidden = 5
-    hidden_dim = 100
+    hidden_dim = 70
     activation = nn.Tanh
     activation_name = "tanh"
 
@@ -20,14 +20,18 @@ def main():
     model.load_state_dict(torch.load(model_file, weights_only=True))
     model.eval()
 
-    dx, dt = 0.1, 0.005
+    dx, dt = 0.01, 0.0005
 
     x, t = load_PINN_data(dx, dt)
     output = model(x, t)
 
     x, t, output = make_data_plottable(x, t, output, dx, dt)
 
-    utils.plot_diffusion_eq(x, t, output)
+    utils.plot_diffusion_eq(x, t, output, title="PINN")
+
+    u = utils.analytical_solution(x, t)
+    utils.plot_diffusion_eq(x, t, u, title="analytical")
+
 
     # utils.make_animation(
     #     utils.matrix_to_dict(output, save_step=2),
