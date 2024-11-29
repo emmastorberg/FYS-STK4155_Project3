@@ -11,7 +11,7 @@ from data.generate_data import load_PINN_data
 
 
 def run_grid_search(x, t, param_grid):
-    for params in tqdm(param_grid, desc="Training Models"):
+    for params in param_grid:
         train_model(
             x, 
             t,
