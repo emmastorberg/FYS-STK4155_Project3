@@ -291,7 +291,6 @@ def gigaplot(
     rod_coordinates: np.ndarray,
     dt: float,
     time_indices: list[int],
-    title: str = "Heat Diffusion in 1D Rod at Different Timesteps",
 ) -> None:
     """Make gigaplot of animation frames at different timesteps.
 
@@ -302,39 +301,25 @@ def gigaplot(
         rod_coordinates (np.ndarray): x-axis, i.e. location in space
         dt (float): timestep length
         time_indices (list[int]): List containing indices of timesteps to create freeze frames of. Length must be at least 2 for code to run.
-        title (str, optional): Title to be displayed on animation. Defaults to "Heat Diffusion in 1D Rod at Different Timesteps".
     """
 
-    fig, ax = plt.subplots(
-        len(time_indices), 4, figsize=(12, 16)
-    )  # include figsize arg here if necessary
+    fig, ax = plt.subplots(len(time_indices), 4, figsize=(12, 16))
     plt.subplots_adjust(wspace=0.1)
 
     for row in range(len(time_indices)):
-        # Get the positions of each subplot (row, col)
-        pos_1 = ax[row, 0].get_position()  # First column
-        pos_2 = ax[row, 1].get_position()  # Second column
-        pos_3 = ax[row, 2].get_position()  # Third column
-        pos_4 = ax[row, 3].get_position()  # Fourth column
+        pos_1 = ax[row, 0].get_position()
+        pos_2 = ax[row, 1].get_position()
+        pos_3 = ax[row, 2].get_position()
+        pos_4 = ax[row, 3].get_position()
 
-        # Adjust the x-positions of the subplots (for columns 1-3)
-        ax[row, 0].set_position(
-            [pos_1.x0, pos_1.y0, pos_1.width, pos_1.height]
-        )  # Column 1 (no change)
-        ax[row, 1].set_position(
-            [pos_2.x0, pos_2.y0, pos_2.width, pos_2.height]
-        )  # Column 2 (no change)
-        ax[row, 2].set_position(
-            [pos_3.x0, pos_3.y0, pos_3.width, pos_3.height]
-        )  # Column 3 (no change)
+        ax[row, 0].set_position([pos_1.x0, pos_1.y0, pos_1.width, pos_1.height])
+        ax[row, 1].set_position([pos_2.x0, pos_2.y0, pos_2.width, pos_2.height])
+        ax[row, 2].set_position([pos_3.x0, pos_3.y0, pos_3.width, pos_3.height])
 
-        # Increase gap between 3rd and 4th columns (wider space between third and fourth)
-        ax[row, 3].set_position(
-            [pos_4.x0 + 0.05, pos_4.y0, pos_4.width, pos_4.height]
-        )  # Column 4 (move right)
+        # increase gap between third and fourth columns
+        ax[row, 3].set_position([pos_4.x0 + 0.05, pos_4.y0, pos_4.width, pos_4.height])
 
     def freeze_frame(data, row, column, time_index, xaxislabel=False):
-        # First row only, for testing
         v = np.array(list(data.values()))
         t = np.array(list(data.keys()))
         save_step = t[1] - t[0]
@@ -354,9 +339,7 @@ def gigaplot(
         )
 
         ax[row, column].set_facecolor("#1F1F1F")
-        ax[row, column].set_ylim(
-            -1, 1
-        )  # Limit the height of the heat region (short rod)
+        ax[row, column].set_ylim(-1, 1)
         ax[row, column].yaxis.set_visible(False)
 
         if xaxislabel:
@@ -364,15 +347,13 @@ def gigaplot(
 
         def custom_tick_formatter(x, pos):
             if x == 0 or x == 1:
-                return f"{int(x)}"  # Format 0 and 1 as integers
+                return f"{int(x)}"
             else:
-                return (
-                    f"{x:.1f}"  # Format other values as floats with one decimal place
-                )
+                return f"{x:.1f}"
 
         ax[row, column].xaxis.set_major_formatter(FuncFormatter(custom_tick_formatter))
 
-        # Text object for displaying time in seconds
+        # text object for displaying time in seconds
         time_text = ax[row, column].text(
             0.05,
             0.95,
@@ -423,12 +404,8 @@ def gigaplot(
             linewidth=3,
         )
         ax[row, 3].yaxis.set_visible(True)
-        ax[row, 3].set_yticks(
-            np.linspace(0, 1, 5)
-        )  # Adjust this as needed (5 ticks from -1 to 1)
-        ax[row, 3].set_yticklabels(
-            [f"{tick:.2f}" for tick in np.linspace(0, 1, 5)]
-        )  # Format ticks
+        ax[row, 3].set_yticks(np.linspace(0, 1, 5))
+        ax[row, 3].set_yticklabels([f"{tick:.2f}" for tick in np.linspace(0, 1, 5)])
         ax[row, 3].set_ylabel(r"$u(x, t)$")
         ax[row, 3].grid(True)
 
