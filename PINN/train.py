@@ -1,34 +1,28 @@
+import sys
+import os
+
+sys.path.append("../FYS-STK4155_project3")
+
 import torch
 import torch.nn as nn
-import numpy as np
 from tqdm import tqdm
 
-from neural_network import NN
-from cost_pinn import cost_total
+from PINN import NN
+from PINN.cost_pinn import cost_total
+# from cost_pinn import cost_total
+import utils
+
+from data.generate_data import load_PINN_data
 
 
-def main():
+def train_model(x, t, num_hidden, hidden_dim, activation, iteration = None):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    L = 1
-    dx = 0.1
-    N = int(L / dx)
-    dt = 0.0005
-    Nt = 1000
-    t_max = dt * Nt
-
-    x = torch.linspace(0, L, N + 1, requires_grad=True)
-    t = torch.linspace(0, t_max, Nt + 1, requires_grad=True)
-    X, T = torch.meshgrid(x, t, indexing="ij")
-    x = X.flatten().reshape(-1, 1)
-    t = T.flatten().reshape(-1, 1)
-
-    nnet = NN()
+    nnet = NN(num_hidden, hidden_dim, activation)
     nnet = nnet.to(device)
     optimizer = torch.optim.Adam(nnet.parameters())
-    optim_name = "Adam"
 
-    epochs = 5000
+    epochs = 3000
     pbar = tqdm(total=epochs)
     for epoch in range(epochs):
         optimizer.zero_grad()
@@ -38,16 +32,13 @@ def main():
         pbar.set_postfix(loss=cost.item())
         pbar.update()
 
-    filename = (
-        f"dx{str(dx).replace(".", "")}_"
-        f"dt{str(dt).replace(".", "")}_"
-        f"Nt{Nt}_"
-        f"optim{optim_name}_"
-        f"epoch{epochs}"
-    )
+    filename = utils.get_model_filename(num_hidden, hidden_dim, activation, iteration)
 
-    torch.save(nnet.state_dict(), f"models/{filename}.pt")
-
+    torch.save(nnet.state_dict(), filename)
 
 if __name__ == "__main__":
-    main()
+    x, t = load_PINN_data(dx=0.1, dt=0.005)
+    num_hidden = 2
+    hidden_dim = 10
+    activation = nn.Tanh
+    train_model(x, t, num_hidden, hidden_dim, activation)

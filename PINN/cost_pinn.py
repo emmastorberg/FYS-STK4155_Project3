@@ -1,6 +1,6 @@
 import torch
 
-from neural_network import NN
+from PINN import NN
 
 
 def cost_pde_residual(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
@@ -81,8 +81,8 @@ def cost_total(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
     Returns:
         torch.Tensor: The combined total loss.
     """
-    loss_r = 200 * cost_pde_residual(x, t, nnet)
+    loss_r = 4 * cost_pde_residual(x, t, nnet)
     loss_ic = cost_initial_condition(x, t, nnet)
-    loss_bc = cost_boundary_condition(x, t, nnet)
+    loss_bc = 8 * cost_boundary_condition(x, t, nnet)
 
     return loss_r + loss_ic + loss_bc
