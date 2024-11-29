@@ -1,6 +1,7 @@
 import numpy as np
 import utils
 import torch
+import plot
 
 from PINN import NN
 from Diffusion1D import *
@@ -13,10 +14,10 @@ def main():
 
     # Helper variables
     L = 1
-    dx = 0.1
+    dx = 0.01
     N = int(L / dx)
-    dt = 0.0005
-    Nt = 600
+    dt = 0.00005
+    Nt = 6000
     t_max = dt * Nt
 
     # Plot analytical solution
@@ -35,7 +36,19 @@ def main():
 
     # utils.plot_diffusion_eq(x, t, output.T)
     u = utils.analytical_solution(x, t)
-    utils.plot_diffusion_eq(x, t, u)
+    plot.diffusion_eq(x, t, u, points=([0.1, 0.5, 0.8], [0.1, 0.01, 0.15]))
+
+    solver = Diffusion1D(dx=dx, dt=dt)
+    data = utils.dict_to_matrix(solver(Nt=Nt, save_step=1))
+
+    plot.two_subplots(x, t, u, data, title1="Exact", title2="Numerical")
+
+    time_indices = [100, 1500, 3200, 5500]
+
+    plot.three_subplots(x, t, u, data, data, title3="Numerical again", time_indices=time_indices)
+
+    data_dict = solver(Nt=Nt, save_step=1)
+    plot.gigaplot(utils.matrix_to_dict(u), data_dict, data_dict, x, dt, time_indices=time_indices)
 
     # # Make animation of analytical solution:
     # utils.make_animation(
