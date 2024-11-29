@@ -9,7 +9,8 @@ class NN(nn.Module):
     Class representing a Physics-Informed Neural Network (PINN) to solve the one-dimensional diffusion equation.
     """
     def __init__(
-            self, num_hidden: int = 3, 
+            self, 
+            num_hidden: int = 3, 
             hidden_dim: int = 50, 
             activation: Type[nn.Module] = nn.Tanh
         ) -> None:
@@ -29,8 +30,6 @@ class NN(nn.Module):
         super().__init__()
 
         input_dim = 2
-        hidden_dim = 50
-        num_hidden = 3
         output_dim = 1
 
         hiddens = []
@@ -39,6 +38,13 @@ class NN(nn.Module):
                 [nn.Linear(hidden_dim, hidden_dim),
                 activation()]
             )
+        # self.model = nn.Sequential(
+        #     nn.Linear(input_dim, 10),
+        #     nn.Tanh(),
+        #     nn.Linear(10, 10),
+        #     nn.Tanh(),
+        #     nn.Linear(10, output_dim)
+        # )
 
         self.model = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),

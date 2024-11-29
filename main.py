@@ -1,36 +1,71 @@
 import numpy as np
-import utils
 import torch
 import torch.nn as nn
 
 from PINN import NN
 from Diffusion1D import *
 from data.generate_data import load_numsolver_data, load_PINN_data, make_data_plottable
+import utils
+from PINN.grid_search import config
+import pandas as pd
 
 
 def main():
-    num_hidden = 5
-    hidden_dim = 70
-    activation = nn.Tanh
-    activation_name = "tanh"
-
-    model_file = f"models/nhidden-{num_hidden}_dim-{hidden_dim}_activation-{activation_name}.pt"
-
-    model = NN(num_hidden, hidden_dim, activation)
-    model.load_state_dict(torch.load(model_file, weights_only=True))
-    model.eval()
-
+    
     dx, dt = 0.01, 0.0005
+    grid = utils.Grid(dx, dt, iterations=3)
+    print(grid)
+    
 
-    x, t = load_PINN_data(dx, dt)
-    output = model(x, t)
+    # param_grid = config.create_param_grid()
+    # grids = utils.Grid(config.create_param_dict(), x, t)
 
-    x, t, output = make_data_plottable(x, t, output, dx, dt)
+    # for params in param_grid:
+    #     num_hidden=params["num_hidden"]
+    #     hidden_dim=params["hidden_dim"]
+    #     activation=params["activation"]
 
-    utils.plot_diffusion_eq(x, t, output, title="PINN")
+    #     model_file = utils.get_model_filename(num_hidden, hidden_dim, activation)
 
-    u = utils.analytical_solution(x, t)
-    utils.plot_diffusion_eq(x, t, u, title="analytical")
+    #     model = NN(num_hidden, hidden_dim, activation)
+    #     model.load_state_dict(torch.load(model_file, weights_only=True))
+    #     model.eval()
+
+        
+
+    #     x, t = load_PINN_data(dx, dt)
+    #     output = model(x, t)
+
+    #     x, t, output = make_data_plottable(x, t, output, dx, dt)
+
+    #     grids.add(num_hidden, hidden_dim, activation, output)
+
+
+
+        # utils.plot_diffusion_eq(x, t, output, title=f"Hidden layers: {num_hidden}, Number of nodes: {hidden_dim}, Activation: {activation_name}")
+
+    # activation_name = "tanh"
+    # num_hidden = 2
+    # hidden_dim = 10
+    # activation = nn.Tanh
+
+    # model_file = f"models/nhidden-{num_hidden}_dim-{hidden_dim}_activation-{activation_name}.pt"
+
+    # model = NN(num_hidden, hidden_dim, activation)
+    # model.load_state_dict(torch.load(model_file, weights_only=True))
+    # model.eval()
+
+    # dx, dt = 0.01, 0.0005
+
+    # x, t = load_PINN_data(dx, dt)
+    # output = model(x, t)
+
+    # x, t, output = make_data_plottable(x, t, output, dx, dt)
+
+    # utils.plot_diffusion_eq(x, t, output, title=f"Hidden layers: {num_hidden}, Number of nodes: {hidden_dim}, Activation: {activation_name}")
+
+        # u = utils.analytical_solution(x, t)
+        # utils.plot_diffusion_eq(x, t, u, title="analytical")
 
 
     # utils.make_animation(

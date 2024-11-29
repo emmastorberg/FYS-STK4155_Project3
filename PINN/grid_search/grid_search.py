@@ -10,21 +10,24 @@ from config import create_param_grid
 from data.generate_data import load_PINN_data
 
 
-def run_grid_search(x, t, param_grid):
+def run_grid_search(x, t, param_grid, iteration):
     for params in param_grid:
         train_model(
             x, 
             t,
-            num_hidden=params["num_hidden"], 
-            hidden_dim=params["hidden_dim"], 
-            activation=params["activation"],
+            params["num_hidden"], 
+            params["hidden_dim"], 
+            params["activation"],
+            iteration,
         )
 
 
 def main():
     x, t = load_PINN_data(dx=0.1, dt=0.005)
     param_grid = create_param_grid()
-    run_grid_search(x, t, param_grid)
+    iterations = 3
+    for i in range(iterations):
+        run_grid_search(x, t, param_grid, i)
 
 
 if __name__ == "__main__":
