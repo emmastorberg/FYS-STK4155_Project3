@@ -91,7 +91,7 @@ def matrix_to_dict(data_matrix: np.ndarray, save_step: int = 1) -> dict:
         data_dict[i] = data_matrix[i]
     return data_dict
 
-def get_model_filename(num_hidden, hidden_dim, activation, iteration):
+def get_model_filename(num_hidden, hidden_dim, activation, iteration = None):
     activation_names = {
         nn.Tanh: "tanh",
         nn.ReLU: "relu",

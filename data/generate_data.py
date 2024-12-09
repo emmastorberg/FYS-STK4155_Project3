@@ -20,7 +20,7 @@ def load_PINN_data(dx: float = 0.1, dt: float = 0.0005, t_max: float = 0.3):
 
 def load_FFNN_data(dx, dt, internal: bool = True):
     random.seed(2024)
-    
+
     L = 1
     t_max = 0.3
     Nx = int(L / dx)
@@ -34,10 +34,8 @@ def load_FFNN_data(dx, dt, internal: bool = True):
     t_zeros = torch.zeros_like(x, requires_grad=True)
 
 
-    n_random = 20
-    # x_random = torch.empty(n_random, requires_grad=True)
-    # t_random = torch.empty(n_random, requires_grad=True)
-    # for i in range(n_random):
+    n_random = 30
+
     if internal:
         x_random = torch.rand((n_random,), requires_grad=True)
         t_random = torch.rand((n_random,), requires_grad=True) * t_max
