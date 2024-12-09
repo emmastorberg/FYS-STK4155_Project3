@@ -11,10 +11,29 @@ import pandas as pd
 
 
 def main():
-    
     dx, dt = 0.01, 0.0005
-    grid = utils.Grid(dx, dt, iterations=3)
-    print(grid)
+
+    num_hidden = 8
+    hidden_dim = 50
+    activation = nn.Tanh
+
+    filename = utils.get_model_filename(num_hidden, hidden_dim, activation)
+    folder, filename = filename.split("/")
+    filename = f"{folder}/FFNN_{filename}"
+
+    model = NN(num_hidden, hidden_dim, activation)
+    model.load_state_dict(torch.load(filename, weights_only=True))
+    model.eval()
+
+    x, t = load_PINN_data(dx, dt)
+    output = model(x, t)
+
+    x, t, output = make_data_plottable(x, t, output, dx, dt)    
+    
+    analytic = utils.analytical_solution(x, t)
+    utils.plot_diffusion_eq(x, t, analytic)
+    utils.plot_diffusion_eq(x, t, output)
+
     
 
     # param_grid = config.create_param_grid()
