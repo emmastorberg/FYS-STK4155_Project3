@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+import plot
 from PINN import NN
 from Diffusion1D import *
 from data.generate_data import load_numsolver_data, load_PINN_data, make_data_plottable
@@ -34,89 +35,73 @@ def main():
     utils.plot_diffusion_eq(x, t, analytic)
     utils.plot_diffusion_eq(x, t, output)
 
-    
 
-    # param_grid = config.create_param_grid()
-    # grids = utils.Grid(config.create_param_dict(), x, t)
+    x, t = load_numsolver_data(dx_2, dt_2)
 
-    # for params in param_grid:
-    #     num_hidden=params["num_hidden"]
-    #     hidden_dim=params["hidden_dim"]
-    #     activation=params["activation"]
+    # Making plot 1
+    solver_1 = Diffusion1D(dx_1)
+    data_1 = utils.dict_to_matrix(solver_1(Nt=Nt_1, save_step=1))
 
-    #     model_file = utils.get_model_filename(num_hidden, hidden_dim, activation)
+    solver_2 = Diffusion1D(dx_2)
+    data_2 = utils.dict_to_matrix(solver_2(Nt=Nt_2, save_step=1))
 
-    #     model = NN(num_hidden, hidden_dim, activation)
-    #     model.load_state_dict(torch.load(model_file, weights_only=True))
-    #     model.eval()
+    u = utils.analytical_solution(x, t)
 
-        
-
-    #     x, t = load_PINN_data(dx, dt)
-    #     output = model(x, t)
-
-    #     x, t, output = make_data_plottable(x, t, output, dx, dt)
-
-    #     grids.add(num_hidden, hidden_dim, activation, output)
-
-
-
-        # utils.plot_diffusion_eq(x, t, output, title=f"Hidden layers: {num_hidden}, Number of nodes: {hidden_dim}, Activation: {activation_name}")
-
-    # activation_name = "tanh"
-    # num_hidden = 2
-    # hidden_dim = 10
-    # activation = nn.Tanh
-
-    # model_file = f"models/nhidden-{num_hidden}_dim-{hidden_dim}_activation-{activation_name}.pt"
-
-    # model = NN(num_hidden, hidden_dim, activation)
-    # model.load_state_dict(torch.load(model_file, weights_only=True))
-    # model.eval()
-
-    # dx, dt = 0.01, 0.0005
-
-    # x, t = load_PINN_data(dx, dt)
-    # output = model(x, t)
-
-    # x, t, output = make_data_plottable(x, t, output, dx, dt)
-
-    # utils.plot_diffusion_eq(x, t, output, title=f"Hidden layers: {num_hidden}, Number of nodes: {hidden_dim}, Activation: {activation_name}")
-
-        # u = utils.analytical_solution(x, t)
-        # utils.plot_diffusion_eq(x, t, u, title="analytical")
-
-
-    # utils.make_animation(
-    #     utils.matrix_to_dict(output, save_step=2),
+    # plot.three_subplots(
     #     x,
-    #     dt,
-    #     title="Heat Diffusion in 1D Rod NN",
+    #     t,
+    #     data_1,
+    #     data_2,
+    #     u,
+    #     title1=r"Numerical ($\Delta x = 0.1$)",
+    #     title2=r"Numerical ($\Delta x = 0.01$)",
+    #     title3="Analytical",
     # )
 
-    # # Plot numerical solution
-    # solver = Diffusion1D(dx=dx, dt=dt)
-    # data = utils.dict_to_matrix(solver(Nt=Nt, save_step=1))
+    # Making error plot for PDE
+    #plot.diffusion_eq(x, t, u-data_2[:-1], title=r"Error of Numerical Method with $\Delta x = 0.01$", normalize=False)
+    plot.diffusion_eq(x, t, abs(u-data_2[:-1]), title=r"Absolute Error of Solver with $\Delta x = 0.01$", normalize=False)
+    #plot.diffusion_eq(x, t, (u-data_2[:-1])**2, title=r"Squared Error of Numerical Method with $\Delta x = 0.01$", normalize=False)
 
-    # utils.plot_diffusion_eq(solver.x, np.linspace(0, t_max, Nt + 1), data)
+    # Making plot 3
+    num_hidden = 8
+    hidden_dim = 30
+    activation = nn.Tanh
 
-    # # Make animation of numerical solution
-    # Nt = 7000
-    # movie = Diffusion1D(dx=0.01)
-    # movie_data = movie(Nt, save_step=20)
+    x, t = load_PINN_data(dx_2, dt_2)
 
-    # movie.animation(movie_data)
+    model_file = utils.get_model_filename(
+        num_hidden, hidden_dim, activation, iteration=1
+    )
 
-    # #from neural network. Not supposed to be here. So that we dont forget how to use it
+    model = NN(num_hidden, hidden_dim, activation)
+    model.load_state_dict(torch.load(model_file, weights_only=True))
+    model.eval()
 
-    # # output = nnet(x, t)
-    # # output = output.reshape(N + 1, Nt + 1)
-    # # output = output.detach().numpy()
+    output = model(x, t)
 
-    # # x = np.linspace(0, L, N + 1)
-    # # t = np.linspace(0, t_max, Nt + 1)
+    x, t, output = make_data_plottable(x, t, output, dx_2, dt_2)
 
-    # # utils.plot_diffusion_eq(x, t, output.T)
+    # plot.diffusion_eq(x, t, output, "Heat Diffusion in 1D Rod Using PINN")
+
+    # Making error plot for PINN
+    #plot.diffusion_eq(x, t, u-output, title=r"Error of PINN", normalize=False)
+    plot.diffusion_eq(x, t, abs(u-output), title=r"Absolute Error of PINN", normalize=False)
+    #plot.diffusion_eq(x, t, (u-output)**2, title=r"Squared Error of PINN", normalize=False)
+
+
+    # # Making plot 5
+    # time_indices = [100, 1000, 2700, 4500]
+    # time_indices = [100, 1500, 3200, 5500]
+
+    # plot.three_subplots(x, t, u, data_2, output, time_indices=time_indices)
+
+    # # Making plot 6
+    # exact_data = utils.matrix_to_dict(u)
+    # numerical_data = utils.matrix_to_dict(data_2)
+    # pinn_data = utils.matrix_to_dict(output)
+
+    # plot.gigaplot(exact_data, numerical_data, pinn_data, x, dt_2, time_indices)
 
 
 if __name__ == "__main__":

@@ -91,120 +91,7 @@ def matrix_to_dict(data_matrix: np.ndarray, save_step: int = 1) -> dict:
         data_dict[i] = data_matrix[i]
     return data_dict
 
-
-def plot_diffusion_eq(
-    space_axis: np.ndarray,
-    time_axis: np.ndarray,
-    solution_grid: np.ndarray,
-    title: str = "Heat Diffusion in 1D Rod",
-) -> None:
-    """Plot the heat at different x-coordinates as a function of time.
-
-    Args:
-        space_axis (np.ndarray): x-axis, i.e. location in space
-        time_axis (np.ndarray): time axis
-        solution_grid (np.ndarray): heat given as a 2D matrix grid.
-        title (str, optional): Title to be displayed on plot. Defaults to "Heat Diffusion in 1D Rod".
-
-    """
-    plt.imshow(
-        solution_grid,
-        aspect="auto",
-        extent=[space_axis.min(), space_axis.max(), time_axis.max(), time_axis.min()],
-        origin="upper",
-        cmap="afmhot",
-        vmin=0,
-        vmax=1,
-    )
-
-    plt.xlabel("Position on Rod (x)")
-    plt.ylabel("Time (s)")
-    plt.colorbar()
-    plt.title(title)
-    plt.show()
-
-
-def make_animation(
-    data: dict,
-    rod_coordinates: np.ndarray,
-    dt: float,
-    title: str = "Heat Diffusion in 1D Rod",
-    filename: str = "diffusion.gif",
-) -> None:
-    """Make animation of heat diffusion in 1D rod.
-
-    Args:
-        data (dict): Dictionary of plotting data
-        rod_coordinates (np.ndarray): x-axis, i.e. location in space
-        dt (float): timestep length
-        title (str, optional): Title to be displayed on animation. Defaults to "Heat Diffusion in 1D Rod".
-        filename (str, optional): Filename to save animation as. Defaults to "diffusion.gif".
-
-    Returns:
-        _type_: _description_
-    """
-    from matplotlib import animation
-
-    fig, ax = plt.subplots()
-
-    v = np.array(list(data.values()))
-    t = np.array(list(data.keys()))
-    save_step = t[1] - t[0]
-
-    im = ax.imshow(
-        np.zeros((1, len(rod_coordinates))),
-        aspect="auto",
-        cmap="afmhot",
-        extent=[
-            rod_coordinates.min(),
-            rod_coordinates.max(),
-            -0.05,
-            0.05,
-        ],  # limited y range for the rod
-        origin="lower",
-        animated=True,
-    )
-
-    ax.set_facecolor("#1F1F1F")
-    ax.set_ylim(-1, 1)  # Limit the height of the heat region (short rod)
-    ax.yaxis.set_visible(False)
-    ax.set_xlabel("Position on Rod (x)")
-    ax.set_title(title)
-
-    # Text object for displaying time in seconds
-    time_text = ax.text(
-        0.05,
-        0.95,
-        "",
-        transform=ax.transAxes,
-        color="white",
-        fontsize=12,
-        verticalalignment="top",
-        horizontalalignment="left",
-    )
-
-    def update(frame):
-        current_time = frame * save_step * dt
-        heat_data = np.array([data[frame * save_step]])
-        img_data = np.zeros_like(rod_coordinates)
-        img_data[:] = heat_data[0, :]
-        im.set_array([img_data])
-        im.set_clim(v.min(), v.max())
-
-        # Update the time display text
-        time_text.set_text(f"t = {current_time:.3f} s")  # Format the time nicely
-
-        return (im, time_text)
-
-    ani = animation.FuncAnimation(
-        fig=fig, func=update, frames=len(data), blit=True, interval=20
-    )
-    ani.save(filename, writer="pillow")
-    ani.to_jshtml()
-    plt.show()
-
-
-def get_model_filename(num_hidden, hidden_dim, activation, iteration = None):
+def get_model_filename(num_hidden, hidden_dim, activation, iteration):
     activation_names = {
         nn.Tanh: "tanh",
         nn.ReLU: "relu",
@@ -300,7 +187,4 @@ class Grid:
                 latex += f"{element:.2e} & "
             latex += "\\\\\n"
         return latex
-    
-
-
 
