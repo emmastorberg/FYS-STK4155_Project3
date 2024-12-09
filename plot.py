@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
-from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import FuncFormatter, ScalarFormatter
 
 
 def diffusion_eq(
@@ -10,6 +10,7 @@ def diffusion_eq(
     solution_grid: np.ndarray,
     title: str = "Heat Diffusion in 1D Rod",
     points: tuple[np.ndarray] | None = None,
+    normalize: bool = True,
 ) -> None:
     """Plot the heat at different x-coordinates as a function of time.
 
@@ -20,16 +21,47 @@ def diffusion_eq(
         title (str, optional): Title to be displayed on plot. Defaults to "Heat Diffusion in 1D Rod".
         points (tuple[np.ndarray], optional): Points to overlay on the plot with x-values first,
         time values second. Defaults to None.
+        normalize (bool): Determines whether to normalize color bar from 0 to 1.
 
     """
-    plt.imshow(
-        solution_grid,
-        aspect="auto",
-        extent=[space_axis.min(), space_axis.max(), time_axis.max(), time_axis.min()],
-        origin="upper",
-        cmap="afmhot",
-    )
-    plt.colorbar()
+    if normalize:
+        plt.imshow(
+            solution_grid,
+            aspect="auto",
+            extent=[
+                space_axis.min(),
+                space_axis.max(),
+                time_axis.max(),
+                time_axis.min(),
+            ],
+            origin="upper",
+            cmap="afmhot",
+            vmin=0,
+            vmax=1,
+        )
+
+        plt.colorbar()
+
+    else:
+        img = plt.imshow(
+            solution_grid,
+            aspect="auto",
+            extent=[
+                space_axis.min(),
+                space_axis.max(),
+                time_axis.max(),
+                time_axis.min(),
+            ],
+            origin="upper",
+            cmap="cividis",
+        )
+
+        colorbar = plt.colorbar(img)
+
+        formatter = ScalarFormatter()
+        formatter.set_scientific(True)
+        formatter.set_powerlimits((-2, 2))
+        colorbar.ax.yaxis.set_major_formatter(formatter)
 
     if points is not None:
         x, t = points
@@ -195,7 +227,7 @@ def three_subplots(
     solution_grid2: np.ndarray,
     solution_grid3: np.ndarray,
     suptitle: str | None = None,
-    title1: str | None = "Exact",
+    title1: str | None = "Analytical",
     title2: str | None = "Numerical",
     title3: str | None = "PINN",
     time_indices: list[int] | None = None,
@@ -385,7 +417,11 @@ def gigaplot(
         freeze_frame(pinn_data, row, 2, index, last_index)
 
         ax[row, 3].plot(
-            rod_coordinates, exact_data[index], color="r", label="Exact", linewidth=3
+            rod_coordinates,
+            exact_data[index],
+            color="r",
+            label="Analytical",
+            linewidth=3,
         )
         ax[row, 3].plot(
             rod_coordinates,
@@ -410,7 +446,7 @@ def gigaplot(
         ax[row, 3].grid(True)
 
         if row == 0:
-            ax[row, 0].set_title("Exact")
+            ax[row, 0].set_title("Analytical")
             ax[row, 1].set_title("Numerical")
             ax[row, 2].set_title("PINN")
             ax[row, 3].set_title("Heat at Various Timesteps")
@@ -419,4 +455,5 @@ def gigaplot(
         if last_index:
             ax[row, 3].set_xlabel("Position on Rod (x)")
 
+    plt.savefig("selected_timesteps.png")
     plt.show()
