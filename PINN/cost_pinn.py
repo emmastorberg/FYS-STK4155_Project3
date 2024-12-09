@@ -86,3 +86,9 @@ def cost_total(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
     loss_bc = 8 * cost_boundary_condition(x, t, nnet)
 
     return loss_r + loss_ic + loss_bc
+
+
+def cost_FFNN(x, t, nnet):
+    true = torch.sin(torch.pi * x) * torch.exp(-torch.pi**2 * t)
+    pred = nnet(x, t)
+    return torch.mean((true - pred)**2)
