@@ -5,7 +5,7 @@ from pde.neural_network import NN
 
 def cost_pde_residual(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
     """
-    Compute the loss associated with the residual of the PDE.
+    Compute the cost associated with the residual of the PDE.
 
     Args:
         x (torch.Tensor): Spatial data points. Expected shape (N, 1).
@@ -27,7 +27,7 @@ def cost_pde_residual(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tenso
 
 def cost_initial_condition(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
     """
-    Compute the loss for the initial condition of the PDE.
+    Compute the cost for the initial condition of the PDE.
 
     This function calculates the difference between the exact initial condition (u(x, t=0) = sin(pi * x)) 
     and the network's prediction at t=0, and returns the mean squared error.
@@ -48,7 +48,7 @@ def cost_initial_condition(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.
 
 def cost_boundary_condition(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
     """
-    Compute the loss for the boundary conditions of the PDE.
+    Compute the cost for the boundary conditions of the PDE.
 
     This function calculates the network's output at the boundaries (x=0 and x=L) for all time steps 
     and returns the mean squared error.
@@ -71,7 +71,7 @@ def cost_boundary_condition(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch
 
 def cost_PINN(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
     """
-    Compute the total loss combining the PDE residual, initial condition, and boundary conditions.
+    Compute the total cost combining the PDE residual, initial condition, and boundary conditions.
 
     Args:
         x (torch.Tensor): Spatial data points. Expected shape (N, 1).
@@ -79,16 +79,27 @@ def cost_PINN(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
         nnet (NN): The neural network model to compute the solution of the PDE.
 
     Returns:
-        torch.Tensor: The combined total loss.
+        torch.Tensor: The combined total cost.
     """
-    loss_r = 4 * cost_pde_residual(x, t, nnet)
-    loss_ic = cost_initial_condition(x, t, nnet)
-    loss_bc = 8 * cost_boundary_condition(x, t, nnet)
+    cost_r = 4 * cost_pde_residual(x, t, nnet)
+    cost_ic = cost_initial_condition(x, t, nnet)
+    cost_bc = 8 * cost_boundary_condition(x, t, nnet)
 
-    return loss_r + loss_ic + loss_bc
+    return cost_r + cost_ic + cost_bc
 
 
-def cost_FFNN(x, t, nnet):
+def cost_FFNN(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
+    """
+    Compute the mean squared error for a standard feed-forward neural network (FFNN).
+
+    Args:
+        x (torch.Tensor): Spatial data points. Expected shape (N, 1).
+        t (torch.Tensor): Temporal data points. Expected shape (N, 1).
+        nnet (NN): The neural network model to compute the solution of the PDE.
+
+    Returns:
+        torch.Tensor: The mean squared error of the output of the neural network.
+    """
     true = torch.sin(torch.pi * x) * torch.exp(-torch.pi**2 * t)
     pred = nnet(x, t)
     return torch.mean((true - pred)**2)

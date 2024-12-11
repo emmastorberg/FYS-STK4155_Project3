@@ -10,8 +10,12 @@ from pde.generate_data import load_numsolver_data, load_PINN_data, load_FFNN_dat
 from pde import utils
 
 
-def train():
+def train_PINN():
     dx, dt = 0.2, 0.01
+
+    num_hidden = 8
+    hidden_dim = 50
+    activation = nn.Tanh
 
     x, t = load_PINN_data(dx, dt)
     train_PINN(x, t, num_hidden, hidden_dim, activation)
@@ -65,5 +69,5 @@ if __name__ == "__main__":
     hidden_dim = 50
     activation = nn.Tanh
 
-    # train()
+    # train_PINN()
     main()

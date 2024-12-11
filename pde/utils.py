@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import torch.nn as nn
 import torch
@@ -90,7 +92,31 @@ def matrix_to_dict(data_matrix: np.ndarray, save_step: int = 1) -> dict:
         data_dict[i] = data_matrix[i]
     return data_dict
 
-def get_model_filename(num_hidden, hidden_dim, activation, iteration = None):
+def get_model_filename(
+        num_hidden: int,
+        hidden_dim: int,
+        activation: str,
+        iteration: Optional[int] = None,
+    ) -> str:
+    """
+    Get filename of saved model with specified parameters.
+
+    Note: Models trained on a standard feed-forward neural network (FFNN) follow
+    the same filename pattern with a leading string of FFNN_. This is not included here.
+
+    Note: This function does not guarantee that the file exists.
+
+    Args:
+        num_hidden (int): Number of hidden layers. Defaults to 3.
+        hidden_dim (int): Number of neurons per hidden layer. Defaults to 50.
+        activation (Type[nn.Module]): The activation function used for all hidden layers.
+        Defaults to torch.nn.Tanh.
+        iteration (Optional, int): The current iteration if several models are trained with
+        these parameters. Defaults to None.
+
+    Returns:
+        str: The filename of saved model with specified parameters.
+    """
     activation_names = {
         nn.Tanh: "tanh",
         nn.ReLU: "relu",
@@ -106,7 +132,33 @@ def get_model_filename(num_hidden, hidden_dim, activation, iteration = None):
     return filename
 
 
-def make_data_plottable(x, t, output, dx, dt):
+def make_data_plottable(
+        x: torch.Tensor,
+        t: torch.Tensor,
+        output: torch.Tensor,
+        dx: float,
+        dt: float,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Convert torch.Tensors of a flattened grid of spatial and temporal data points, as well
+    as a non-flattened torch.Tensor grid of the corresponding outputs to
+    np.ndarrays suitable for plotting.
+
+    Note: This funciton assumes the temporal data points to go from 0 to 0.3.
+
+    Args:
+        x (torch.Tensor): Spatial data points. Expected shape (N, 1).
+        t (torch.Tensor): Temporal data points. Expected shape (N, 1).
+        output (torch.Tensor): The output of the neural network, representing the 
+        solution to the diffusion equation at the given spatial and temporal points.
+        dx (float): The lenght between each spatial data point.
+        dt (float): The lenght between each temporal data point.
+
+    Returns:
+        tuple (np.ndarray, np.ndarray, np.ndarray):
+            A tuple of np.ndarrays with spatial, temporal and the corresponding 
+            outputs respectively.
+    """
     L = 1
     t_max = 0.3
     Nx = int(L / dx)
@@ -122,7 +174,28 @@ def make_data_plottable(x, t, output, dx, dt):
 
 
 class Grid:
-    def __init__(self, dx, dt, iterations = 3):
+    """
+    Class for handeling saved models from a grid search, and printing the
+    results in a LaTeX format suitable for a table.
+    """
+    def __init__(
+            self,
+            dx: float,
+            dt: float,
+            iterations: Optional[int] = 3,
+        ) -> None:
+        """
+        Initialize the grid.
+
+        Args:
+        dx (float): The lenght between each spatial data point.
+        dt (float): The lenght between each temporal data point.
+        iterations (Optional, int): The number of models trained with
+        the same parameters. Defaults to 3.
+
+        Returns:
+            None
+        """
         self.dx = dx
         self.dt = dt
         self.x, self.t = load_PINN_data(dx, dt)
@@ -150,9 +223,19 @@ class Grid:
             "activation": {key: value for value, key in enumerate(self.param_dict["activation"])},
         }
 
-        self.create_grids()
+        self._create_grids()
 
-    def create_grids(self):
+    def _create_grids(self) -> None:
+        """
+        Create a grid with the mse of each trained model. If several models are trained with
+        the same parameters, then the grid consists of an mse of the mses per model.
+
+        Args:
+            None
+        
+        Returns:
+            None
+        """
         for i in range(self.iterations):
             for params in self.param_grid:
                 num_hidden=params["num_hidden"]
@@ -180,9 +263,27 @@ class Grid:
         self.grid = np.mean(self.grid, axis=3)
 
     def mse(self, output):
+        """
+        Calculate the mean squared error (MSE) of the outputs predicted by a model and the true values.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         return np.mean((self.true - output)**2)
 
     def __str__(self):
+        """
+        Return the grids in a LaTeX format suitable for tables.
+
+        Args:
+            None
+
+        Returns:
+            str: The grids in a LaTeX format.
+        """
         activation_names = {
             nn.Tanh: "tanh",
             nn.ReLU: "relu",
@@ -195,7 +296,16 @@ class Grid:
             grids += f"{self.latex_table(self.grid[i])}\n\n"
         return grids
 
-    def latex_table(self, table: np.ndarray):
+    def latex_table(self, table: np.ndarray) -> str:
+        """
+        Return a single grid in a LaTeX format.
+
+        Args:
+            table (np.ndarray): The grid in the form of a np.ndarray.
+
+        Returns: 
+            str: The grid in a LaTeX format.
+        """
         latex = ""
         for row in table:
             for element in row:
