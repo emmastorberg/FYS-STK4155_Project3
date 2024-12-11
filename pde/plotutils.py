@@ -175,8 +175,8 @@ def two_subplots(
 
     fig, ax = plt.subplots(1, 2, sharey=True)  # include figsize arg here if necessary
 
-    vmin = min(solution_grid1.min(), solution_grid2.min())
-    vmax = max(solution_grid1.max(), solution_grid2.max())
+    vmin = 0
+    vmax = 1
 
     # Create a Normalize object to scale the colorbar between the min and max values
     norm = Normalize(vmin=vmin, vmax=vmax)
