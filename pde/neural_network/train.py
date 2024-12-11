@@ -1,21 +1,14 @@
-import sys
-import os
-
-sys.path.append("../FYS-STK4155_project3")
-
 import torch
 import torch.nn as nn
 from tqdm import tqdm
 
-from PINN import NN
-from PINN.cost_pinn import cost_total, cost_FFNN
-# from cost_pinn import cost_total
-import utils
-
-from data.generate_data import load_PINN_data, load_numsolver_data, load_FFNN_data
+from pde.neural_network import NN
+from pde.neural_network.cost_functions import cost_FFNN, cost_PINN
+from pde.generate_data import load_PINN_data, load_numsolver_data, load_FFNN_data
+from pde import utils
 
 
-def train_model(x, t, num_hidden, hidden_dim, activation, iteration = None):
+def train_PINN(x, t, num_hidden, hidden_dim, activation, iteration = None):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     nnet = NN(num_hidden, hidden_dim, activation)
@@ -26,7 +19,7 @@ def train_model(x, t, num_hidden, hidden_dim, activation, iteration = None):
     pbar = tqdm(total=epochs)
     for epoch in range(epochs):
         optimizer.zero_grad()
-        cost = cost_total(x, t, nnet)
+        cost = cost_PINN(x, t, nnet)
         cost.backward()
         optimizer.step()
         pbar.set_postfix(loss=cost.item())
@@ -63,8 +56,9 @@ def train_FFNN(x, t, num_hidden, hidden_dim, activation):
 if __name__ == "__main__":
     dx, dt, t_max = 0.02, 0.01, 0.03
     x, t = load_PINN_data(dx, dt, t_max)
+
     num_hidden = 8
     hidden_dim = 50
     activation = nn.Tanh
 
-    train_model(x, t, num_hidden, hidden_dim, activation)
+    train_PINN(x, t, num_hidden, hidden_dim, activation)

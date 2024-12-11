@@ -1,18 +1,11 @@
-import sys
-import os
-
-sys.path.append("../FYS-STK4155_project3")
-
-from tqdm import tqdm
-
-from PINN import train_model
-from config import create_param_grid
-from data.generate_data import load_PINN_data
+from pde.neural_network.train import train_PINN
+from pde.grid_search.config import create_param_grid
+from pde.generate_data import load_PINN_data
 
 
 def run_grid_search(x, t, param_grid, iteration):
     for params in param_grid:
-        train_model(
+        train_PINN(
             x, 
             t,
             params["num_hidden"], 

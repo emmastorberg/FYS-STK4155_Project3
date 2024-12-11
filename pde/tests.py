@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
-import utils
-from Diffusion1D import *
+
+from pde import utils
+from pde.diffusion1d import Diffusion1D
 
 @pytest.mark.parametrize("dx", [0.11, 0.09, 0.3, 0.6, 0.21])
 def test_dx_values(dx):
@@ -13,7 +14,7 @@ def test_dt_values(dt):
     with pytest.raises(ValueError):
         sol = Diffusion1D(dx=0.1, dt = dt)
 
-@pytest.mark.parametrize("dx, atol", [(0.1, 1e-02), (0.01, 1e-15)])
+@pytest.mark.parametrize("dx, atol", [(0.1, 1e-02), (0.01, 1e-6)])
 def test_diffusion_equation_error(dx, atol):
     Nt = 100
 

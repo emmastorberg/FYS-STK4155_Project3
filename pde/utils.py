@@ -1,11 +1,10 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch
 
-from PINN.grid_search import config
-from PINN import NN
-from data.generate_data import make_data_plottable, load_PINN_data, load_numsolver_data
+from pde.grid_search import config
+from pde.neural_network import NN
+from pde.generate_data import load_PINN_data, load_numsolver_data
 
 
 def initial_condition(x: np.ndarray) -> np.ndarray:
@@ -102,9 +101,25 @@ def get_model_filename(num_hidden, hidden_dim, activation, iteration = None):
     else:
         iter = f"_iter-{iteration + 1}"
     activation_name = activation_names[activation]
-    filename = f"models/nhidden-{num_hidden}_dim-{hidden_dim}_activation-{activation_name}{iter}.pt"
+    filename = f"pde/models/nhidden-{num_hidden}_dim-{hidden_dim}_activation-{activation_name}{iter}.pt"
 
     return filename
+
+
+def make_data_plottable(x, t, output, dx, dt):
+    L = 1
+    t_max = 0.3
+    Nx = int(L / dx)
+    Nt = int(t_max / dt)
+
+    output = output.reshape(Nx + 1, Nt + 1)
+    output = output.detach().numpy()
+
+    x = np.linspace(0, L, Nx + 1)
+    t = np.linspace(0, t_max, Nt + 1)
+
+    return x, t, output.T
+
 
 class Grid:
     def __init__(self, dx, dt, iterations = 3):

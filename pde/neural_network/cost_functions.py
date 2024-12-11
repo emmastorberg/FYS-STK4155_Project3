@@ -1,6 +1,6 @@
 import torch
 
-from PINN import NN
+from pde.neural_network import NN
 
 
 def cost_pde_residual(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
@@ -69,7 +69,7 @@ def cost_boundary_condition(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch
     return torch.mean(u_bc0**2 + u_bc1**2)
 
 
-def cost_total(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
+def cost_PINN(x: torch.Tensor, t: torch.Tensor, nnet: NN) -> torch.Tensor:
     """
     Compute the total loss combining the PDE residual, initial condition, and boundary conditions.
 

@@ -38,13 +38,6 @@ class NN(nn.Module):
                 [nn.Linear(hidden_dim, hidden_dim),
                 activation()]
             )
-        # self.model = nn.Sequential(
-        #     nn.Linear(input_dim, 10),
-        #     nn.Tanh(),
-        #     nn.Linear(10, 10),
-        #     nn.Tanh(),
-        #     nn.Linear(10, output_dim)
-        # )
 
         self.model = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
