@@ -18,6 +18,8 @@ To run tests, run:
 python3 -m pytest pde/tests.py
 ```
 
-
-# Numerically-determined heat diffusion:
+# Animations
+![alt text](https://github.com/emmastorberg/FYS-STK4155_Project3/blob/main/plots/diffusion.gif)
+![alt text](https://github.com/emmastorberg/FYS-STK4155_Project3/blob/main/plots/diffusion_PINN.gif)
 ![alt text](https://github.com/emmastorberg/FYS-STK4155_Project3/blob/main/plots/numerical_diffusion.gif)
+
